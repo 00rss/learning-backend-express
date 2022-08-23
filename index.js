@@ -1,8 +1,11 @@
 // const express = require("express");
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
 import { requestLogger, unknownEndpoint } from "./utils/customMiddleware.js";
 import { generateId } from "./utils/manageId.js";
+import dotenv from "dotenv";
+dotenv.config();
 // import { notes } from "./utils/variables.js";
 
 //let data just for learning
@@ -35,7 +38,7 @@ morgan.token("body", (req) => {
 
 //Inicializate app
 const app = express();
-
+app.use(cors());
 //MIDDLEWARES
 app.use(express.json());
 app.use(requestLogger);
@@ -100,7 +103,7 @@ app.use(unknownEndpoint);
 
 //STARTING THE SERVER ON A EXPLICIT PORT
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
