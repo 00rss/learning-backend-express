@@ -1,14 +1,46 @@
 // const express = require("express");
 import express from "express";
-import { requestLogger } from "./utils/customMiddleware.js";
+import morgan from "morgan";
+import { requestLogger, unknownEndpoint } from "./utils/customMiddleware.js";
 import { generateId } from "./utils/manageId.js";
-import { notes } from "./utils/variables.js";
+// import { notes } from "./utils/variables.js";
+
+//let data just for learning
+//should be replaced later with data form a database
+let notes = [
+  {
+    id: 1,
+    content: "HTML is easy",
+    date: "2019-05-30T17:30:31.098Z",
+    important: true,
+  },
+  {
+    id: 2,
+    content: "Browser can execute only Javascript",
+    date: "2019-05-30T18:39:34.091Z",
+    important: false,
+  },
+  {
+    id: 3,
+    content: "GET and POST are the most important methods of HTTP protocol",
+    date: "2019-05-30T19:20:14.298Z",
+    important: true,
+  },
+];
+
+//custom morgan token
+morgan.token("body", (req) => {
+  return JSON.stringify(req.body);
+});
 
 //Inicializate app
 const app = express();
 
 //MIDDLEWARES
+app.use(express.json());
 app.use(requestLogger);
+app.use(morgan(":method :url :status :response-time ms :body"));
+// app.use(morgan("tiny"));
 
 //root route
 
@@ -24,7 +56,8 @@ app.get("/api/notes/:id", (request, response) => {
   if (note) {
     response.json(note);
   } else {
-    response.status(404).end();
+    // response.status(404).end();
+    response.status(404).json(`the note: ${id} does not exits`);
   }
 });
 app.delete("/api/notes/:id", (request, response) => {
@@ -59,6 +92,11 @@ app.post("/api/notes", (request, response) => {
 
   response.json(note);
 });
+
+//unknownEndpoint need to be at the end
+//couse is the last route to match,
+//also this middleware doens't have next() function
+app.use(unknownEndpoint);
 
 //STARTING THE SERVER ON A EXPLICIT PORT
 

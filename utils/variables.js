@@ -1,4 +1,4 @@
-export let notes = [
+export var notes = [
   {
     id: 1,
     content: "HTML is easy",
