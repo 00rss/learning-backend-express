@@ -41,6 +41,7 @@ const app = express();
 app.use(cors());
 //MIDDLEWARES
 app.use(express.json());
+app.use(express.static("dist"));
 app.use(requestLogger);
 app.use(morgan(":method :url :status :response-time ms :body"));
 // app.use(morgan("tiny"));
